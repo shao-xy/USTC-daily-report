@@ -10,17 +10,17 @@
 USERNAME = ''
 PASSWORD = ''
 
-# 当前所在地：省、市、区
-# 具体数值和身份证前六位编码方式相同。
-# 省、市选择时分别只保留前二、四位，后面补0至六位。
-#   不知道可自行上网搜，这里提供合肥市的常用编码
-# 安徽省
-NOW_PROVINCE = '340000'
-# 合肥市
-NOW_CITY = '340100'
-# 包河区：340111，蜀山区：340104
-NOW_DISTRICT = '340111'
-#NOW_DISTRICT = '340104'
+# # 当前所在地：省、市、区
+# # 具体数值和身份证前六位编码方式相同。
+# # 省、市选择时分别只保留前二、四位，后面补0至六位。
+# #   不知道可自行上网搜，这里提供合肥市的常用编码
+# # 安徽省
+# NOW_PROVINCE = '340000'
+# # 合肥市
+# NOW_CITY = '340100'
+# # 包河区：340111，蜀山区：340104
+# NOW_DISTRICT = '340111'
+# #NOW_DISTRICT = '340104'
 
 # 当前状态：
 # 1: 正常在校园内
@@ -28,10 +28,14 @@ NOW_DISTRICT = '340111'
 # 如非这两种情况请手动打卡
 NOW_STATUS = '1'
 
-# 校区：
-# 东(2)，南(3)，中(4)，北(5)，西(6)，先研院(7)，
-# 国金院(8)，其他校区(9)，校外(0)
-WHICH_CAMPUS = '6'
+# # 校区：
+# # 东(2)，南(3)，中(4)，北(5)，西(6)，先研院(7)，
+# # 国金院(8)，其他校区(9)，校外(0)
+# WHICH_CAMPUS = '6'
+
+# 2022/03/19更新：校区不再以数字编号，而直接以汉字作为值
+# 可能的值：东（/西/南/北/中/高新）校区、先研院、国金院、合肥市内校外、合肥市外校区
+CAMPUS_NAME = '西校区'
 
 # 紧急联系人：姓名、关系、电话
 EMERGENCY_CONTACT = ''
@@ -155,16 +159,17 @@ def commit_daily_report(req, cookie_jar, token):
 	}
 	report_payload = {
 		'_token': token,				# 加入上面获得的token
-		'now_address' : '1',			# 当前所在地：内地
-		'gps_now_address': '',			#
-		'now_province': NOW_PROVINCE,		# 当前所在地（省或直辖市）
-		'gps_province': '',				#
-		'now_city': NOW_CITY,			# 当前所在地（地级市）
-		'gps_city': '',					#
-		'now_country': NOW_DISTRICT,			# 当前所在地（区）
-		'gps_country': '',			#
-		'now_detail': '',				#
-		'is_inschool': WHICH_CAMPUS,				# 是否在校：选择对应校区
+		#'now_address' : '1',			# 当前所在地：内地
+		#'gps_now_address': '',			#
+		#'now_province': NOW_PROVINCE,		# 当前所在地（省或直辖市）
+		#'gps_province': '',				#
+		#'now_city': NOW_CITY,			# 当前所在地（地级市）
+		#'gps_city': '',					#
+		#'now_country': NOW_DISTRICT,			# 当前所在地（区）
+		#'gps_country': '',			#
+		#'now_detail': '',				#
+		#'is_inschool': WHICH_CAMPUS,				# 是否在校：选择对应校区
+		'juzhudi': CAMPUS_NAME,
 		'body_condition':	'1',		# 当前身体状况：正常
 		'body_condition_detail': '',	# 
 		'now_status': NOW_STATUS,				# 当前状态：正常在校园内
