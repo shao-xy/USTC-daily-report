@@ -20,6 +20,12 @@ NOW_STATUS = '1'
 # （虽然提交请求时硬改是可以的^_^）
 CAMPUS_NAME = '合肥市内校外'
 
+# 2022/03/30更新：校外居住报备时需要填写具体位置。校内同学可跳过
+## 区县选择：只能选择以下四个区之一：包河区、蜀山区、庐阳区、瑶海区
+HOME_DIST = ''
+#HOME_DIST = '包河区'
+HOME_ADDR = ''
+
 # 紧急联系人：姓名、关系、电话
 EMERGENCY_CONTACT = ''
 EMERGENCY_CONTACT_RELATION = ''
@@ -173,7 +179,9 @@ def commit_daily_report(req, cookie_jar, token):
 		#'gps_country': '',			#
 		#'now_detail': '',				#
 		#'is_inschool': WHICH_CAMPUS,				# 是否在校：选择对应校区
-		'juzhudi': CAMPUS_NAME,
+		'juzhudi': CAMPUS_NAME,		# 当前校区：（中文）
+		'city_area':	HOME_DIST,  # 具体位置：区县选择
+		'jutiwz':			HOME_ADDR,  # 具体位置：住址
 		'body_condition':	'1',		# 当前身体状况：正常
 		'body_condition_detail': '',	# 
 		'now_status': NOW_STATUS,				# 当前状态：正常在校园内
