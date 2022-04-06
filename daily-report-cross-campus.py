@@ -263,11 +263,11 @@ def commit_cross_campus_application(req, cookie_jar, token):
 
 	# 这里不要尝试改时间了，已经试过了没用
 	start = datetime.datetime.today()
-	tomorrow = start + datetime.timedelta(days = 1)
+	#tomorrow = start + datetime.timedelta(days = 1)
 	end = datetime.datetime(
-		tomorrow.year,
-		tomorrow.month,
-		tomorrow.day,
+		start.year,
+		start.month,
+		start.day,
 		hour=23,
 		minute=59,
 		second=59
