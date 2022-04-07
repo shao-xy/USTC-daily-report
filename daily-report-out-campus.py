@@ -253,12 +253,20 @@ def commit_get_into_campus_application(req, cookie_jar, token):
 	}
 
 	# 这里不要尝试改时间了，已经试过了没用
-	start = datetime.datetime.today()
-	#tomorrow = start + datetime.timedelta(days = 1)
+	now = datetime.datetime.today()
+	tomorrow = now + datetime.timedelta(days = 1)
+	start = datetime.datetime(
+		tomorrow.year,
+		tomorrow.month,
+		tomorrow.day,
+		hour=0,
+		minute=0,
+		second=0
+	)
 	end = datetime.datetime(
-		start.year,
-		start.month,
-		start.day,
+		tomorrow.year,
+		tomorrow.month,
+		tomorrow.day,
 		hour=23,
 		minute=59,
 		second=59
@@ -266,12 +274,14 @@ def commit_get_into_campus_application(req, cookie_jar, token):
 	payload = {
 		'_token': token,
 		'choose_ds': ADVISOR_ID,
+		'start_day': '2', # 进出校日期：明天
 		'start_date': start.strftime('%Y-%m-%d %H:%M:%S'),
 		'end_date': end.strftime('%Y-%m-%d %H:%M:%S'),
 		'reason': GETINSCHOOL_REASON,
 		'return_college[]': DESTINATION_CAMPUS,
 		't': 3	# 进出校申请
 	}
+	dout(payload)
 	# Application start
 	r = visit(req, 'post',
 	'https://weixine.ustc.edu.cn/2020/stayinout_apply',
