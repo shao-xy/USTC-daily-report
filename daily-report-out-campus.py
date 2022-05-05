@@ -31,10 +31,11 @@ EMERGENCY_CONTACT = ''
 EMERGENCY_CONTACT_RELATION = ''
 EMERGENCY_CONTACT_PHONE = ''
 
+# 2022/05/05更新：系统中增加进出校报备选项，不再需要向老师申请
 # 2022/03/22更新：进出校申请需要选择老师审核！！这里的编号是老师在系统里的编号，
 # 一般是10位数字，不知道请运行脚本check-advisor-id.py获取。
 # 注意：不是老师的工号，不要乱写！！
-ADVISOR_ID = ''
+#ADVISOR_ID = ''
 
 # 2022/03/22更新：进出校原因。需要可自行更改。
 GETINSCHOOL_REASON = '日常工作学习需要进出校园。'
@@ -220,7 +221,7 @@ def commit_daily_report(req, cookie_jar, token):
 def visit_get_into_campus_application_page(req, cookie_jar):
 	# Get application page
 	r = visit(req, 'get',
-	'https://weixine.ustc.edu.cn/2020/stayinout_apply?t=3',
+	'https://weixine.ustc.edu.cn/2020/apply/daliy/i?t=3',
 	cookie_jar)
 
 	# Get my token for later commit
@@ -253,28 +254,18 @@ def commit_get_into_campus_application(req, cookie_jar, token):
 	}
 
 	# 这里不要尝试改时间了，已经试过了没用
-	now = datetime.datetime.today()
-	tomorrow = now + datetime.timedelta(days = 1)
-	start = datetime.datetime(
-		tomorrow.year,
-		tomorrow.month,
-		tomorrow.day,
-		hour=0,
-		minute=0,
-		second=0
-	)
+	start = datetime.datetime.today()
+	#tomorrow = start + datetime.timedelta(days = 1)
 	end = datetime.datetime(
-		tomorrow.year,
-		tomorrow.month,
-		tomorrow.day,
+		start.year,
+		start.month,
+		start.day,
 		hour=23,
 		minute=59,
 		second=59
 	)
 	payload = {
 		'_token': token,
-		'choose_ds': ADVISOR_ID,
-		'start_day': '2', # 进出校日期：明天
 		'start_date': start.strftime('%Y-%m-%d %H:%M:%S'),
 		'end_date': end.strftime('%Y-%m-%d %H:%M:%S'),
 		'reason': GETINSCHOOL_REASON,
@@ -284,18 +275,19 @@ def commit_get_into_campus_application(req, cookie_jar, token):
 	dout(payload)
 	# Application start
 	r = visit(req, 'post',
-	'https://weixine.ustc.edu.cn/2020/stayinout_apply',
+	'https://weixine.ustc.edu.cn/2020/apply/daliy/post',
 	cookie_jar, payload)
 	dout('Last status code: %d' % r.status_code)
 	if (r.status_code == 200):
 		result_page = etree.HTML(r.text)
-		applications_box_headers = result_page.xpath("//div[@id='apply-box']/table/thead/tr[2]/th/text()")
-		print('\t'.join(applications_box_headers[:2]))
+		applications_box_headers = result_page.xpath("//div[@id='apply-box']/table/thead/tr/th/text()")
+		dout('\t'.join(applications_box_headers[:3]))
 		applications_box_entries = result_page.xpath("//div[@id='apply-box']/table/tbody/tr")
 		for i in range(1, len(applications_box_entries) + 1):
-			applications_box_entry_period = result_page.xpath("//div[@id='apply-box']/table/tbody/tr[%d]/td[1]/text()" % i)[0]
-			applications_box_entry_status = result_page.xpath("//div[@id='apply-box']/table/tbody/tr[%d]/td[2]/nobr/span/text()" % i)[0]
-			print(f'{applications_box_entry_period}\t{applications_box_entry_status}')
+			applications_box_entry_period_start = result_page.xpath("//div[@id='apply-box']/table/tbody/tr[%d]/td[1]/text()" % i)[0]
+			applications_box_entry_period_end = result_page.xpath("//div[@id='apply-box']/table/tbody/tr[%d]/td[2]/text()" % i)[0]
+			applications_box_entry_status = result_page.xpath("//div[@id='apply-box']/table/tbody/tr[%d]/td[3]/text()" % i)[0]
+			dout(f'{applications_box_entry_period_start}\t{applications_box_entry_period_end}\t{applications_box_entry_status}')
 		r.close()
 		return 0
 	else:
